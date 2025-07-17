@@ -1,5 +1,6 @@
 import TelegramBot from "node-telegram-bot-api"
 import axios from "axios"
+import iconv from "iconv-lite"
 
 export function startBot(token: string, parseCsv: (csv: string) => object[]) {
     const bot = new TelegramBot(token, { polling: true })
@@ -25,8 +26,11 @@ export function startBot(token: string, parseCsv: (csv: string) => object[]) {
             const fileId = msg.document.file_id
             const fileLink = await bot.getFileLink(fileId)
 
-            const response = await axios.get<string>(fileLink)
-            const csvData = response.data
+            const response = await axios.get<ArrayBuffer>(fileLink, {
+                responseType: "arraybuffer"
+            })
+
+            const csvData = iconv.decode(Buffer.from(response.data), "windows-1252")
 
             const records = parseCsv(csvData)
 
