@@ -11,7 +11,8 @@ export function parseCsvToTransactions(csv: string): Transaction[] {
         .filter((row: any) => row["Data"] !== "00/00/0000")
         .map((row: any) => {
             const rawDate = row["Data"]
-            const rawDescription = `${row["Lançamento"]} - ${row["Detalhes"]}`.trim()
+            const rawDescription =
+                `${row["Lançamento"]} - ${row["Detalhes"]}`.trim()
             const rawValue = row["Valor"]
             const rawType = row["Tipo Lançamento"]
 
