@@ -8,20 +8,17 @@ export function parseCsvToTransactions(csv: string): Transaction[] {
     })
 
     return records
-        .filter((row: any) => row["Data"] !== "00/00/0000")
+        .filter((row: any) => rowShouldBeIncluded(row))
         .map((row: any) => {
             const rawDate = row["Data"]
-            const rawDescription =
-                `${row["Lançamento"]} - ${row["Detalhes"]}`.trim()
+            const rawDescription = `${row["Lançamento"]} - ${row["Detalhes"]}`.trim()
             const rawValue = row["Valor"]
             const rawType = row["Tipo Lançamento"]
 
             const [day, month, year] = rawDate.split("/")
             const isoDate = new Date(`${year}-${month}-${day}`).toISOString()
 
-            const valueInCents = parseInt(
-                rawValue.replace(/\./g, "").replace(",", "")
-            )
+            const valueInCents = Number(rawValue.replace(".", "").replace(",", "."))
 
             const type = rawType === "Entrada" ? "INCOME" : "EXPENSE"
 
@@ -33,3 +30,16 @@ export function parseCsvToTransactions(csv: string): Transaction[] {
             } satisfies Transaction
         })
 }
+
+function rowShouldBeIncluded(row: any): Boolean {
+    if (row["Data"] === "00/00/0000") return false
+
+    const excludeTerms = [
+        "Aplicação Poupança",
+        "Saldo Anterior",
+        "S A L D O"
+    ]
+
+    return !excludeTerms.some(term => row["Lançamento"].includes(term))
+}
+
