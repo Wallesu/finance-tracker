@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id          Int           @id @default(autoincrement())
+  description String        @unique
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          Int       @id @default(autoincrement())
+  date        DateTime
+  type        String
+  description String
+  value       Float
+  hash        String    @unique @db.VarChar(64) // SHA-256 tem 64 caracteres em hex
+  categoryId  Int?
+  category    Category?  @relation(fields: [categoryId], references: [id])
+
+  @@index([hash])
+}
