@@ -3,7 +3,7 @@ dotenv.config()
 
 import { startBot } from "./services/telegram/telegramStatementReader"
 import { parseCsvToTransactions } from "./services/telegram/parsers/bbCsvParser"
-import { insert } from "./services/synchronizer/synchronizer"
+import { insertTransactions, getDiffTransactions, getAllTransactions } from "./services/synchronizer/synchronizer"
 import { Transaction } from "src/dtos/transaction"
 import {
     buildSheetsClient,
@@ -27,15 +27,20 @@ startBot(
     TELEGRAM_TOKEN,
     parseCsvToTransactions,
     async (transactions: Transaction[]) => {
-        await insert(transactions)
-
-        const directoryGoogleKeyFile = "src/credentials"
+        const directoryGoogleKeyFile = "src/credentials/"
         const sheetClient = buildSheetsClient(
             directoryGoogleKeyFile + GOOGLE_KEY_FILE_NAME
         )
 
-        const range = "dados!A1" // ou "Sheet1!A1"
 
-        await sheetUploader(sheetClient, transactions, SPREADSHEET_ID, range)
+        const startCell = "dados!A1"
+        //const transactionsAlreadyInSheet = await sheetReader(sheetClient, SPREADSHEET_ID, startCell)
+
+        const transactionsAlreadyInDb = await getAllTransactions()
+        const newTransactions = getDiffTransactions(transactionsAlreadyInDb, transactions)
+
+        await insertTransactions(newTransactions)
+
+        await sheetUploader(sheetClient, newTransactions, SPREADSHEET_ID, startCell)
     }
 )
