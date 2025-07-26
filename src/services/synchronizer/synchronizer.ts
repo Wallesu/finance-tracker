@@ -24,7 +24,6 @@ export async function insert(transactions: Transaction[]): Promise<void> {
     }
 }
 
-
 function gerarHash({ date, type, description, value }: Transaction): string {
     const base = `${date}|${type}|${description}|${value}`
     return crypto.createHash("sha256").update(base).digest("hex")

@@ -3,7 +3,11 @@ import axios from "axios"
 import iconv from "iconv-lite"
 import { Transaction } from "src/dtos/transaction"
 
-export function startBot(token: string, parseCsv: (csv: string) => Transaction[], callback: (statementContent: Transaction[]) => void) {
+export function startBot(
+    token: string,
+    parseCsv: (csv: string) => Transaction[],
+    callback: (statementContent: Transaction[]) => void
+) {
     const bot = new TelegramBot(token, { polling: true })
 
     bot.on("message", async (msg) => {
@@ -14,12 +18,17 @@ export function startBot(token: string, parseCsv: (csv: string) => Transaction[]
             }
 
             if (!msg.document || !isCsvFile(msg.document.file_name)) {
-                await bot.sendMessage(msg.chat.id, "Por favor, envie um arquivo CSV.")
+                await bot.sendMessage(
+                    msg.chat.id,
+                    "Por favor, envie um arquivo CSV."
+                )
                 return
             }
 
-
-            const csvData = await downloadAndDecodeCsv(bot, msg.document.file_id)
+            const csvData = await downloadAndDecodeCsv(
+                bot,
+                msg.document.file_id
+            )
             const records = parseCsv(csvData)
 
             await bot.sendMessage(
@@ -46,7 +55,10 @@ function isCsvFile(fileName?: string): boolean {
     return !!fileName && fileName.toLowerCase().endsWith(".csv")
 }
 
-async function downloadAndDecodeCsv(bot: TelegramBot, fileId: string): Promise<string> {
+async function downloadAndDecodeCsv(
+    bot: TelegramBot,
+    fileId: string
+): Promise<string> {
     const fileLink = await bot.getFileLink(fileId)
 
     const response = await axios.get<ArrayBuffer>(fileLink, {
