@@ -1,10 +1,10 @@
 import { Transaction } from "src/dtos/transaction"
-import { PrismaClient } from "../../generated/prisma"
+import { PrismaClient } from "@prisma/client"
 import crypto from "crypto"
 
 const prisma = new PrismaClient()
 
-export async function synchronizer(transactions: Transaction[]): Promise<void> {
+export async function insert(transactions: Transaction[]): Promise<void> {
     for (const tx of transactions) {
         const hash = gerarHash(tx)
 
