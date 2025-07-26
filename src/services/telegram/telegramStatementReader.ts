@@ -8,7 +8,7 @@ export function startBot(token: string, parseCsv: (csv: string) => Transaction[]
 
     bot.on("message", async (msg) => {
         try {
-            if (isAllowedUser(msg.chat.id)) {
+            if (!isAllowedUser(msg.chat.id)) {
                 console.log(`O id ${msg.chat.id} tentou usar o bot`)
                 return
             }
