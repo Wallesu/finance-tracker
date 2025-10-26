@@ -1,5 +1,5 @@
 import { parse } from "csv-parse/sync"
-import { Transaction } from "src/dtos/transaction"
+import { Transaction } from "src/interfaces/transaction"
 
 export function csvToTransactions(csv: string): Transaction[] {
     const records = parse(csv, {

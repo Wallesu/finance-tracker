@@ -1,4 +1,4 @@
-import { Transaction, TransactionType } from "src/dtos/transaction"
+import { Transaction, TransactionType } from "src/interfaces/transaction"
 import { google, sheets_v4 } from "googleapis"
 
 export async function upload(

@@ -1,6 +1,6 @@
 import bbCsvParser from "./bbParser"
 import nubankParser from "./nubankParser"
-import { Transaction } from "src/dtos/transaction"
+import { Transaction } from "src/interfaces/transaction"
 
 export function selectCsvParser(
     fileName: string

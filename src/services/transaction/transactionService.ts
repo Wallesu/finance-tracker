@@ -1,4 +1,4 @@
-import { Transaction as TransactionDTO } from "src/dtos/transaction"
+import { Transaction as TransactionDTO } from "src/interfaces/transaction"
 import { PrismaClient, Transaction as TransactionPrisma } from "@prisma/client"
 import crypto from "crypto"
 

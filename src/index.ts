@@ -3,7 +3,7 @@ dotenv.config()
 
 import telegramService from "./services/telegram/telegramService"
 import transactionService from "./services/transaction/transactionService"
-import { Transaction } from "src/dtos/transaction"
+import { Transaction } from "src/interfaces/transaction"
 import { Transaction as TransactionPrisma } from "@prisma/client"
 import categoryMapper from "./services/category/categoryService"
 import sheetService from "./services/sheet/sheetService"

@@ -1,5 +1,5 @@
 import Tesseract from "tesseract.js"
-import { Transaction } from "src/dtos/transaction"
+import { Transaction } from "src/interfaces/transaction"
 
 async function imageToText(imagePath: string) {
     const result = await Tesseract.recognize(imagePath, "por") // "por" = português
