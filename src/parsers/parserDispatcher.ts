@@ -1,5 +1,5 @@
-import { parseCsvToTransactions as parseBbCsv } from "./bbCsvParser"
-import { parseNubankCsvToTransactions as parseNubankCsv } from "./nubankCsvParser"
+import bbCsvParser from "./bbParser"
+import nubankParser from "./nubankParser"
 import { Transaction } from "src/dtos/transaction"
 
 export function selectCsvParser(
@@ -9,9 +9,9 @@ export function selectCsvParser(
 
     if (lowerName.includes("nubank")) {
         console.log("identificado extrato da Nubank")
-        return parseNubankCsv
+        return nubankParser.csvToTransactions
     }
 
     console.log("identificado extrato do Banco do Brasil")
-    return parseBbCsv
+    return bbCsvParser.csvToTransactions
 }

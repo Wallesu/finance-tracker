@@ -1,7 +1,7 @@
 import { parse } from "csv-parse/sync"
 import { Transaction } from "src/dtos/transaction"
 
-export function parseNubankCsvToTransactions(csv: string): Transaction[] {
+export function csvToTransactions(csv: string): Transaction[] {
     const records = parse(csv, {
         columns: true,
         skip_empty_lines: true,
@@ -25,4 +25,8 @@ export function parseNubankCsvToTransactions(csv: string): Transaction[] {
             type
         } satisfies Transaction
     })
+}
+
+export default {
+    csvToTransactions
 }

@@ -1,7 +1,7 @@
 import { parse } from "csv-parse/sync"
 import { Transaction } from "src/dtos/transaction"
 
-export function parseCsvToTransactions(csv: string): Transaction[] {
+function csvToTransactions(csv: string): Transaction[] {
     const records = parse(csv, {
         columns: true,
         skip_empty_lines: true
@@ -44,4 +44,8 @@ function rowShouldBeIncluded(row: any): Boolean {
 
 function toPositive(value: number): number {
     return Math.abs(value)
+}
+
+export default {
+    csvToTransactions
 }

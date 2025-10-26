@@ -2,10 +2,10 @@ import dotenv from "dotenv"
 dotenv.config()
 
 import telegramService from "./services/telegram/telegramService"
-import synchronizer from "./services/synchronizer/synchronizer"
+import transactionService from "./services/transaction/transactionService"
 import { Transaction } from "src/dtos/transaction"
 import { Transaction as TransactionPrisma } from "@prisma/client"
-import categoryMapper from "./services/categoryMapper/categoryMapper"
+import categoryMapper from "./services/category/categoryService"
 import sheetService from "./services/sheet/sheetService"
 
 function getRequiredEnvVar(name: string): string {
@@ -32,16 +32,16 @@ telegramService.startBot(TELEGRAM_TOKEN, async (transactions: Transaction[]) => 
 
     console.log("buscando transações da base de dados...")
     const transactionsAlreadyInDb: TransactionPrisma[] =
-        await synchronizer.getAllTransactions()
+        await transactionService.getAll()
 
     console.log("comparando diferenças da base com as transações enviadas...")
-    const newTransactions: Transaction[] = synchronizer.getDiffTransactions(
+    const newTransactions: Transaction[] = transactionService.getDiff(
         transactionsAlreadyInDb,
         transactions
     )
 
     console.log("inserindo novas transações na base...")
-    await synchronizer.insertTransactions(newTransactions)
+    await transactionService.insert(newTransactions)
 
     console.log("categorizando transações...")
     const newTransactionsWithCategories = newTransactions.map((transaction) => {
