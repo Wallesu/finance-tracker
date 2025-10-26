@@ -1,40 +1,75 @@
 import TelegramBot from "node-telegram-bot-api"
 import axios from "axios"
 import iconv from "iconv-lite"
+import fs from "fs"
 import { Transaction } from "src/dtos/transaction"
+import { selectCsvParser } from "./parsers/parserDispatcher"
+import cajuParser from "./parsers/cajuParser"
 
 export function startBot(
     token: string,
-    parseCsv: (csv: string) => Transaction[],
     callback: (statementContent: Transaction[]) => void
 ) {
     const bot = new TelegramBot(token, { polling: true })
 
-    bot.on("message", async (msg) => {
+    bot.on("message", async (msg: TelegramBot.Message) => {
         try {
             if (!isAllowedUser(msg.chat.id)) {
                 console.log(`O id ${msg.chat.id} tentou usar o bot`)
                 return
             }
 
-            if (!msg.document || !isCsvFile(msg.document.file_name)) {
+            if (!isValidFile(msg)) {
                 await bot.sendMessage(
                     msg.chat.id,
-                    "Por favor, envie um arquivo CSV."
+                    "Por favor, envie um arquivo CSV ou uma imagem"
                 )
                 return
             }
 
-            const csvData = await downloadAndDecodeCsv(
-                bot,
-                msg.document.file_id
-            )
-            const records = parseCsv(csvData)
+            let records: Transaction[] = []
 
-            await bot.sendMessage(
-                msg.chat.id,
-                `Recebi o CSV e converti para JSON com ${records.length} registros!`
-            )
+            if (msg.document) {
+                const fileName = msg.document.file_name!
+                const parser = selectCsvParser(fileName)
+
+                const csvData = await downloadAndDecodeCsv(
+                    bot,
+                    msg.document.file_id
+                )
+                records = parser(csvData)
+
+                await bot.sendMessage(
+                    msg.chat.id,
+                    `Recebi o CSV e converti para JSON com ${records.length} registros!`
+                )
+            }
+
+            if (msg.photo) {
+                const photo = msg.photo?.pop()
+                if (!photo) return
+
+                const fileId = photo.file_id
+
+                const fileLink = await bot.getFileLink(fileId)
+                const response = await axios.get(fileLink, {
+                    responseType: "arraybuffer"
+                })
+
+                const dirPath: string = "./src/temp/"
+                const fileName: string = "imagem.jpg"
+
+                if (!fs.existsSync(dirPath)) {
+                    fs.mkdirSync(dirPath)
+                }
+
+                fs.writeFileSync(dirPath + fileName, Buffer.from(response.data))
+
+                const cajuText: string = await cajuParser.imageToText(
+                    dirPath + fileName
+                )
+                records = cajuParser.textToTransaction(cajuText)
+            }
 
             callback(records)
         } catch (error) {
@@ -66,4 +101,10 @@ async function downloadAndDecodeCsv(
     })
 
     return iconv.decode(Buffer.from(response.data), "windows-1252")
+}
+
+function isValidFile(msg: TelegramBot.Message): boolean {
+    if (msg.document && !isCsvFile(msg.document.file_name)) return false
+
+    return !!msg.photo
 }

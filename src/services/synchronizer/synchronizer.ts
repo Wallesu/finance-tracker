@@ -10,19 +10,17 @@ export async function insertTransactions(
     for (const tx of transactions) {
         const hash = gerarHash(tx)
 
-        const exist = await prisma.transaction.findUnique({ where: { hash } })
-
-        if (!exist) {
-            await prisma.transaction.create({
-                data: {
-                    date: new Date(tx.date),
-                    type: tx.type,
-                    description: tx.description,
-                    value: tx.value,
-                    hash
-                }
-            })
-        }
+        await prisma.transaction.upsert({
+            where: { hash },
+            create: {
+                date: new Date(tx.date),
+                type: tx.type,
+                description: tx.description,
+                value: tx.value,
+                hash
+            },
+            update: {} // se já existir, não faz nada
+        })
     }
 }
 
