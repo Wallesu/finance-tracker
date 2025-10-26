@@ -1,4 +1,4 @@
-export function categoryMapper(description: string): string {
+function map(description: string): string {
     const patterns: Record<string, string[]> = {
         bebida: ["bebida", "cervejaria"],
         animais: ["nutri norte"],
@@ -31,4 +31,8 @@ export function categoryMapper(description: string): string {
     }
 
     return ""
+}
+
+export default {
+    map
 }

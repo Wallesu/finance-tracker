@@ -6,7 +6,7 @@ import { Transaction } from "src/dtos/transaction"
 import { selectCsvParser } from "./parsers/parserDispatcher"
 import cajuParser from "./parsers/cajuParser"
 
-export function startBot(
+function startBot(
     token: string,
     callback: (statementContent: Transaction[]) => void
 ) {
@@ -107,4 +107,8 @@ function isValidFile(msg: TelegramBot.Message): boolean {
     if (msg.document && !isCsvFile(msg.document.file_name)) return false
 
     return !!msg.photo
+}
+
+export default {
+    startBot
 }

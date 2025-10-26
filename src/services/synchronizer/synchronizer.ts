@@ -4,7 +4,7 @@ import crypto from "crypto"
 
 const prisma = new PrismaClient()
 
-export async function insertTransactions(
+async function insertTransactions(
     transactions: TransactionDTO[]
 ): Promise<void> {
     for (const tx of transactions) {
@@ -24,12 +24,12 @@ export async function insertTransactions(
     }
 }
 
-export async function getAllTransactions(): Promise<TransactionPrisma[]> {
+async function getAllTransactions(): Promise<TransactionPrisma[]> {
     const transactions = await prisma.transaction.findMany()
     return transactions
 }
 
-export function getDiffTransactions(
+function getDiffTransactions(
     transactionAlreadyInDb: TransactionPrisma[],
     transactionInComing: TransactionDTO[]
 ): TransactionDTO[] {
@@ -44,4 +44,10 @@ export function getDiffTransactions(
 function gerarHash({ date, type, description, value }: TransactionDTO): string {
     const base = `${date}|${type}|${description}|${value}`
     return crypto.createHash("sha256").update(base).digest("hex")
+}
+
+export default {
+    insertTransactions,
+    getAllTransactions,
+    getDiffTransactions
 }

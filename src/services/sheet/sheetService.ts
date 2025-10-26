@@ -1,7 +1,7 @@
 import { Transaction, TransactionType } from "src/dtos/transaction"
 import { google, sheets_v4 } from "googleapis"
 
-export async function sheetUploader(
+export async function upload(
     sheetsClient: sheets_v4.Sheets,
     transactions: Transaction[],
     spreadsheetId: string,
@@ -35,7 +35,7 @@ export async function sheetUploader(
     }
 }
 
-export async function sheetReader(
+export async function read(
     sheetsClient: sheets_v4.Sheets,
     spreadsheetId: string,
     startCell: string
@@ -65,11 +65,17 @@ export async function sheetReader(
         })
 }
 
-export function buildSheetsClient(keyFileName: string): sheets_v4.Sheets {
+export function buildClient(keyFileName: string): sheets_v4.Sheets {
     const auth = new google.auth.GoogleAuth({
         keyFile: keyFileName,
         scopes: ["https://www.googleapis.com/auth/spreadsheets"]
     })
 
     return google.sheets({ version: "v4", auth })
+}
+
+export default {
+    upload,
+    read,
+    buildClient
 }
