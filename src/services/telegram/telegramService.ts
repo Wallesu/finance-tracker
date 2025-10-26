@@ -3,8 +3,8 @@ import axios from "axios"
 import iconv from "iconv-lite"
 import fs from "fs"
 import { Transaction } from "src/dtos/transaction"
-import { selectCsvParser } from "./parsers/parserDispatcher"
-import cajuParser from "./parsers/cajuParser"
+import { selectCsvParser } from "../../parsers/parserDispatcher"
+import cajuParser from "../../parsers/cajuParser"
 
 function startBot(
     token: string,
