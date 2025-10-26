@@ -28,7 +28,7 @@ export function parseCsvToTransactions(csv: string): Transaction[] {
             return {
                 date: isoDate,
                 description: rawDescription,
-                value: valueInCents,
+                value: toPositive(valueInCents),
                 type
             } satisfies Transaction
         })
@@ -40,4 +40,8 @@ function rowShouldBeIncluded(row: any): Boolean {
     const excludeTerms = ["Aplicação Poupança", "Saldo Anterior", "S A L D O"]
 
     return !excludeTerms.some((term) => row["Lançamento"].includes(term))
+}
+
+function toPositive(value: number): number {
+    return Math.abs(value)
 }

@@ -3,8 +3,14 @@ dotenv.config()
 
 import { startBot } from "./services/telegram/telegramStatementReader"
 import { parseCsvToTransactions } from "./services/telegram/parsers/bbCsvParser"
-import { insertTransactions, getDiffTransactions, getAllTransactions } from "./services/synchronizer/synchronizer"
+import {
+    insertTransactions,
+    getDiffTransactions,
+    getAllTransactions
+} from "./services/synchronizer/synchronizer"
 import { Transaction } from "src/dtos/transaction"
+import { Transaction as TransactionPrisma } from "@prisma/client"
+import { categoryMapper } from "./services/categoryMapper/categoryMapper"
 import {
     buildSheetsClient,
     sheetUploader
@@ -32,15 +38,40 @@ startBot(
             directoryGoogleKeyFile + GOOGLE_KEY_FILE_NAME
         )
 
-
         const startCell = "dados!A1"
         //const transactionsAlreadyInSheet = await sheetReader(sheetClient, SPREADSHEET_ID, startCell)
 
-        const transactionsAlreadyInDb = await getAllTransactions()
-        const newTransactions = getDiffTransactions(transactionsAlreadyInDb, transactions)
+        console.log("buscando transações da base de dados...")
+        const transactionsAlreadyInDb: TransactionPrisma[] =
+            await getAllTransactions()
 
+        console.log(
+            "comparando diferenças da base com as transações enviadas..."
+        )
+        const newTransactions: Transaction[] = getDiffTransactions(
+            transactionsAlreadyInDb,
+            transactions
+        )
+
+        console.log("inserindo novas transações na base...")
         await insertTransactions(newTransactions)
 
-        await sheetUploader(sheetClient, newTransactions, SPREADSHEET_ID, startCell)
+        console.log("categorizando transações...")
+        const newTransactionsWithCategories = newTransactions.map(
+            (transaction) => {
+                transaction.category = categoryMapper(transaction.description)
+                return transaction
+            }
+        )
+
+        console.log("inserindo transações na planilha...")
+        await sheetUploader(
+            sheetClient,
+            newTransactionsWithCategories,
+            SPREADSHEET_ID,
+            startCell
+        )
+
+        console.log("atualizando categorias retroativamente...")
     }
 )

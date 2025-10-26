@@ -12,7 +12,8 @@ export async function sheetUploader(
             t.date,
             t.description,
             t.value,
-            t.type
+            t.type,
+            t.category ?? ""
         ])
 
         await sheetsClient.spreadsheets.values.append({
@@ -41,23 +42,27 @@ export async function sheetReader(
 ): Promise<Transaction[]> {
     const response = await sheetsClient.spreadsheets.values.get({
         spreadsheetId,
-        range: `${startCell}:D1000`,
+        range: `${startCell}:E1000`
     })
 
     const rows = response.data.values || []
 
-    return rows.map((row): Transaction => {
-        return {
-            date: row[0],
-            description: row[1],
-            value: parseFloat(row[2]),
-            type: row[3] as TransactionType
-        }
-    }).filter((row: Transaction) => {
-        if (!row.date || !row.description || !row.value || !row.type) return false
+    return rows
+        .map((row): Transaction => {
+            return {
+                date: row[0],
+                description: row[1],
+                value: parseFloat(row[2]),
+                type: row[3] as TransactionType,
+                category: row[4] || undefined
+            }
+        })
+        .filter((row: Transaction) => {
+            if (!row.date || !row.description || !row.value || !row.type)
+                return false
 
-        return true
-    })
+            return true
+        })
 }
 
 export function buildSheetsClient(keyFileName: string): sheets_v4.Sheets {
