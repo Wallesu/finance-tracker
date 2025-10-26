@@ -57,20 +57,25 @@ function startBot(
                 })
 
                 const dirPath: string = "./src/temp/"
-                const fileName: string = "imagem.jpg"
+                const fileName: string = `${Date.now()}.jpg`
 
-                if (!fs.existsSync(dirPath)) {
-                    fs.mkdirSync(dirPath)
-                }
+                const filePath = dirPath + fileName
 
-                fs.writeFileSync(dirPath + fileName, Buffer.from(response.data))
+                try {
+                    if (!fs.existsSync(dirPath)) {
+                        fs.mkdirSync(dirPath)
+                    }
 
-                const cajuText: string = await cajuParser.imageToText(
-                    dirPath + fileName
-                )
+                    fs.writeFileSync(filePath, Buffer.from(response.data))
+
+                    const cajuText: string = await cajuParser.imageToText(
+                        filePath
+                    )
                 records = cajuParser.textToTransaction(cajuText)
+                } finally {
+                    await fs.promises.unlink(filePath)
+                }
             }
-
             callback(records)
         } catch (error) {
             console.error("Erro:", error)
