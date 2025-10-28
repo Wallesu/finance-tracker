@@ -15,7 +15,8 @@ async function insert(transactions: TransactionDTO[]): Promise<void> {
                 type: tx.type,
                 description: tx.description,
                 value: tx.value,
-                hash
+                hash,
+                cardId: tx.card?.id
             },
             update: {} // se já existir, não faz nada
         })

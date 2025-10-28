@@ -5,6 +5,7 @@ import fs from "fs"
 import { Transaction } from "src/interfaces/transaction"
 import { selectCsvParser } from "../../parsers/parserDispatcher"
 import cajuParser from "../../parsers/cajuParser"
+import cardService from "../card/cardService"
 
 function startBot(
     token: string,
@@ -28,6 +29,7 @@ function startBot(
             }
 
             let records: Transaction[] = []
+            let cardId: number = 0
 
             if (msg.document) {
                 const fileName = msg.document.file_name!
@@ -38,6 +40,9 @@ function startBot(
                     msg.document.file_id
                 )
                 records = parser(csvData)
+
+                // Buscar ou criar card e obter ID
+                cardId = await cardService.getOrCreateCard(fileName)
 
                 await bot.sendMessage(
                     msg.chat.id,
@@ -71,6 +76,15 @@ function startBot(
                     const cajuText: string =
                         await cajuParser.imageToText(filePath)
                     records = cajuParser.textToTransaction(cajuText)
+
+                    // Buscar ou criar card Caju e obter ID
+                    cardId = await cardService.getOrCreateCard()
+                    records.forEach(record => {
+                        record.card = {
+                            id: cardId,
+                            name: "Caju"
+                        }
+                    })
                 } finally {
                     await fs.promises.unlink(filePath)
                 }
