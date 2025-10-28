@@ -4,9 +4,7 @@ import crypto from "crypto"
 
 const prisma = new PrismaClient()
 
-async function insert(
-    transactions: TransactionDTO[]
-): Promise<void> {
+async function insert(transactions: TransactionDTO[]): Promise<void> {
     for (const tx of transactions) {
         const hash = gerarHash(tx)
 

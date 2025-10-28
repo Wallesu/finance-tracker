@@ -21,39 +21,48 @@ const TELEGRAM_TOKEN = getRequiredEnvVar("TELEGRAM_TOKEN")
 const GOOGLE_KEY_FILE_NAME = getRequiredEnvVar("GOOGLE_KEY_FILE_NAME")
 const SPREADSHEET_ID = getRequiredEnvVar("SPREADSHEET_ID")
 
-telegramService.startBot(TELEGRAM_TOKEN, async (transactions: Transaction[]) => {
-    const directoryGoogleKeyFile = "src/credentials/"
-    const sheetClient = sheetService.buildClient(
-        directoryGoogleKeyFile + GOOGLE_KEY_FILE_NAME
-    )
+telegramService.startBot(
+    TELEGRAM_TOKEN,
+    async (transactions: Transaction[]) => {
+        const directoryGoogleKeyFile = "src/credentials/"
+        const sheetClient = sheetService.buildClient(
+            directoryGoogleKeyFile + GOOGLE_KEY_FILE_NAME
+        )
 
-    const startCell = "dados!A1"
-    //const transactionsAlreadyInSheet = await sheetReader(sheetClient, SPREADSHEET_ID, startCell)
+        const startCell = "dados!A1"
+        //const transactionsAlreadyInSheet = await sheetReader(sheetClient, SPREADSHEET_ID, startCell)
 
-    console.log("buscando transações da base de dados...")
-    const transactionsAlreadyInDb: TransactionPrisma[] =
-        await transactionService.getAll()
+        console.log("buscando transações da base de dados...")
+        const transactionsAlreadyInDb: TransactionPrisma[] =
+            await transactionService.getAll()
 
-    console.log("comparando diferenças da base com as transações enviadas...")
-    const newTransactions: Transaction[] = transactionService.getDiff(
-        transactionsAlreadyInDb,
-        transactions
-    )
+        console.log(
+            "comparando diferenças da base com as transações enviadas..."
+        )
+        const newTransactions: Transaction[] = transactionService.getDiff(
+            transactionsAlreadyInDb,
+            transactions
+        )
 
-    console.log("inserindo novas transações na base...")
-    await transactionService.insert(newTransactions)
+        console.log("inserindo novas transações na base...")
+        await transactionService.insert(newTransactions)
 
-    console.log("categorizando transações...")
-    const newTransactionsWithCategories = newTransactions.map((transaction) => {
-        transaction.category = categoryMapper.map(transaction.description)
-        return transaction
-    })
+        console.log("categorizando transações...")
+        const newTransactionsWithCategories = newTransactions.map(
+            (transaction) => {
+                transaction.category = categoryMapper.map(
+                    transaction.description
+                )
+                return transaction
+            }
+        )
 
-    console.log("inserindo transações na planilha...")
-    await sheetService.upload(
-        sheetClient,
-        newTransactionsWithCategories,
-        SPREADSHEET_ID,
-        startCell
-    )
-})
+        console.log("inserindo transações na planilha...")
+        await sheetService.upload(
+            sheetClient,
+            newTransactionsWithCategories,
+            SPREADSHEET_ID,
+            startCell
+        )
+    }
+)

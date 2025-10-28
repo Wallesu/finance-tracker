@@ -68,10 +68,9 @@ function startBot(
 
                     fs.writeFileSync(filePath, Buffer.from(response.data))
 
-                    const cajuText: string = await cajuParser.imageToText(
-                        filePath
-                    )
-                records = cajuParser.textToTransaction(cajuText)
+                    const cajuText: string =
+                        await cajuParser.imageToText(filePath)
+                    records = cajuParser.textToTransaction(cajuText)
                 } finally {
                     await fs.promises.unlink(filePath)
                 }
