@@ -5,9 +5,12 @@ function map(description: string): string {
         alimentação: [
             "ifood",
             "bodega do ju",
-            "JANAINA CUN",
-            "Mercado GUTO",
-            "SORVETERIA"
+            "janaina cun",
+            "Mercado",
+            "sorveteria",
+            "mercado",
+            "ifd*",
+            "condorSuperCenter"
         ],
         entretenimento: ["cinema", "ALLES PARK", "Rufino"],
         roupa: ["youcom"],
