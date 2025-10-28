@@ -22,9 +22,41 @@
 }
 
 .dashboard-header h1 {
-  margin: 0;
+  margin: 0 0 1rem 0;
   color: #333;
   font-size: 2rem;
+}
+
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-label {
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.month-filter-select {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #333;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+
+.month-filter-select:hover {
+  border-color: #646cff;
+}
+
+.month-filter-select:focus {
+  outline: none;
+  border-color: #646cff;
 }
 
 .dashboard-stats {
