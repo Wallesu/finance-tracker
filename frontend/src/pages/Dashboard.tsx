@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Transaction } from '../types/transaction'
 import { transactionService } from '../services/api'
 import CategoryChart from '../components/CategoryChart'
+import MonthExpenseChart from '../components/MonthExpenseChart'
 import './Dashboard.css'
 
 function Dashboard() {
@@ -90,10 +91,14 @@ function Dashboard() {
 
       <div className="dashboard-content">
         <h2>Gráficos</h2>
-        <div className="chart-container">
+        <div className="charts-grid">
           <div className="chart-card">
             <h3>Gastos por Categoria</h3>
             <CategoryChart transactions={transactions} />
+          </div>
+          <div className="chart-card">
+            <h3>Gastos Mensais (Últimos 6 meses)</h3>
+            <MonthExpenseChart transactions={transactions} />
           </div>
         </div>
       </div>
