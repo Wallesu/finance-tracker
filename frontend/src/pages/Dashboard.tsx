@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Transaction } from '../types/transaction'
 import { transactionService } from '../services/api'
+import CategoryChart from '../components/CategoryChart'
 import './Dashboard.css'
 
 function Dashboard() {
@@ -84,6 +85,16 @@ function Dashboard() {
           <p className={`stat-value ${balance >= 0 ? 'positive' : 'negative'}`}>
             {balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
           </p>
+        </div>
+      </div>
+
+      <div className="dashboard-content">
+        <h2>Gráficos</h2>
+        <div className="chart-container">
+          <div className="chart-card">
+            <h3>Gastos por Categoria</h3>
+            <CategoryChart transactions={transactions} />
+          </div>
         </div>
       </div>
 

@@ -103,6 +103,24 @@
   cursor: not-allowed;
 }
 
+.chart-container {
+  margin-top: 1rem;
+}
+
+.chart-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
 .transactions-table {
   overflow-x: auto;
 }
