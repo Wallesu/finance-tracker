@@ -3,6 +3,7 @@ import { Transaction } from '../types/transaction'
 import { transactionService } from '../services/api'
 import CategoryChart from '../components/CategoryChart'
 import MonthExpenseChart from '../components/MonthExpenseChart'
+import CardExpenseChart from '../components/CardExpenseChart'
 import './Dashboard.css'
 
 function Dashboard() {
@@ -32,14 +33,14 @@ function Dashboard() {
   // Gera lista de meses/anos únicos das transações
   const availableMonths = useMemo(() => {
     const monthMap = new Map<string, string>()
-    
+
     allTransactions.forEach((transaction) => {
       const date = new Date(transaction.date)
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
       const monthLabel = `${date.toLocaleString('pt-BR', { month: 'long' })}/${date.getFullYear()}`
       monthMap.set(monthKey, monthLabel)
     })
-    
+
     return Array.from(monthMap.entries())
       .sort((a, b) => b[0].localeCompare(a[0]))
       .map(([key, label]) => ({ key, label }))
@@ -50,7 +51,7 @@ function Dashboard() {
     if (selectedMonthFilter === 'all') {
       return allTransactions
     }
-    
+
     return allTransactions.filter((transaction) => {
       const date = new Date(transaction.date)
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
@@ -148,14 +149,18 @@ function Dashboard() {
             <h3>Gastos Mensais (Últimos 6 meses)</h3>
             <MonthExpenseChart transactions={transactions} />
           </div>
+          <div className="chart-card">
+            <h3>Gastos por Cartão</h3>
+            <CardExpenseChart transactions={transactions} />
+          </div>
         </div>
       </div>
 
       <div className="dashboard-content">
         <div className="dashboard-content-header">
           <h2>Transações ({transactions.length})</h2>
-          <button 
-            onClick={handleCategorize} 
+          <button
+            onClick={handleCategorize}
             disabled={categorizing}
             className="categorize-button"
           >

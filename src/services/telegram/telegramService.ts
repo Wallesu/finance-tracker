@@ -6,6 +6,7 @@ import { Transaction } from "src/interfaces/transaction"
 import { selectCsvParser } from "../../parsers/parserDispatcher"
 import cajuParser from "../../parsers/cajuParser"
 import cardService from "../card/cardService"
+import { Card } from "@prisma/client" 
 
 function startBot(
     token: string,
@@ -42,7 +43,10 @@ function startBot(
                 records = parser(csvData)
 
                 // Buscar ou criar card e obter ID
-                cardId = await cardService.getOrCreateCard(fileName)
+                const card: Card = await cardService.getOrCreateCard(fileName)
+                records.forEach(record => {
+                    record.card = card
+                })
 
                 await bot.sendMessage(
                     msg.chat.id,
@@ -78,12 +82,9 @@ function startBot(
                     records = cajuParser.textToTransaction(cajuText)
 
                     // Buscar ou criar card Caju e obter ID
-                    cardId = await cardService.getOrCreateCard()
+                    const card: Card = await cardService.getOrCreateCard()
                     records.forEach(record => {
-                        record.card = {
-                            id: cardId,
-                            name: "Caju"
-                        }
+                        record.card = card
                     })
                 } finally {
                     await fs.promises.unlink(filePath)
@@ -122,7 +123,7 @@ async function downloadAndDecodeCsv(
 }
 
 function isValidFile(msg: TelegramBot.Message): boolean {
-    if (msg.document && !isCsvFile(msg.document.file_name)) return false
+    if (msg.document && isCsvFile(msg.document.file_name)) return true
 
     return !!msg.photo
 }

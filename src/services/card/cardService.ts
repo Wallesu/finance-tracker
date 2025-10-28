@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, Card } from "@prisma/client"
 
 const prisma = new PrismaClient()
 
-async function getOrCreateCard(fileName?: string): Promise<number> {
+async function getOrCreateCard(fileName?: string): Promise<Card> {
     let cardName: string
 
     if (!fileName) {
@@ -29,7 +29,7 @@ async function getOrCreateCard(fileName?: string): Promise<number> {
         console.log(`Card criado: ${cardName}`)
     }
 
-    return card.id
+    return card as Card
 }
 
 export default {

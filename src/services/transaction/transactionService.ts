@@ -24,6 +24,7 @@ async function insert(transactions: TransactionDTO[]): Promise<void> {
 }
 
 async function getAll(): Promise<TransactionPrisma[]> {
+    console.log("getAll")
     const transactions = await prisma.transaction.findMany()
     return transactions
 }
