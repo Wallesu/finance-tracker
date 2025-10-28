@@ -22,6 +22,8 @@
     },
     "homepage": "https://github.com/Wallesu/finance-tracker#readme",
     "devDependencies": {
+        "@types/cors": "^2.8.17",
+        "@types/express": "^5.0.0",
         "@types/node": "^24.0.14",
         "@types/node-telegram-bot-api": "^0.64.9",
         "@typescript-eslint/eslint-plugin": "^8.37.0",
@@ -36,9 +38,11 @@
     "dependencies": {
         "@prisma/client": "^6.12.0",
         "axios": "^1.10.0",
+        "cors": "^2.8.5",
         "crypto": "^1.0.1",
         "csv-parse": "^6.1.0",
         "dotenv": "^17.2.0",
+        "express": "^4.21.1",
         "googleapis": "^154.0.0",
         "iconv-lite": "^0.6.3",
         "node-telegram-bot-api": "^0.66.0",

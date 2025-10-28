@@ -7,6 +7,7 @@ import { Transaction } from "src/interfaces/transaction"
 import { Transaction as TransactionPrisma } from "@prisma/client"
 import categoryMapper from "./services/category/categoryService"
 import sheetService from "./services/sheet/sheetService"
+import { startServer } from "./api/server"
 
 function getRequiredEnvVar(name: string): string {
     const value = process.env[name]
@@ -21,6 +22,10 @@ const TELEGRAM_TOKEN = getRequiredEnvVar("TELEGRAM_TOKEN")
 const GOOGLE_KEY_FILE_NAME = getRequiredEnvVar("GOOGLE_KEY_FILE_NAME")
 const SPREADSHEET_ID = getRequiredEnvVar("SPREADSHEET_ID")
 
+// Iniciar servidor Express
+startServer()
+
+// Iniciar bot do Telegram
 telegramService.startBot(
     TELEGRAM_TOKEN,
     async (transactions: Transaction[]) => {
