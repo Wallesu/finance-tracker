@@ -6,4 +6,8 @@ export interface Transaction {
     value: number
     type: TransactionType
     category?: string
+    card?: {
+        id: number
+        name: string
+    }
 }

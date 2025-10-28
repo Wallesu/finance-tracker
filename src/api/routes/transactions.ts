@@ -11,6 +11,7 @@ router.get('/transactions', async (req: express.Request, res: express.Response) 
         const transactions = await prisma.transaction.findMany({
             include: {
                 category: true,
+                card: true,
             },
             orderBy: {
                 date: 'desc',
@@ -33,6 +34,7 @@ router.get('/transactions/:id', async (req: express.Request, res: express.Respon
             where: { id },
             include: {
                 category: true,
+                card: true,
             },
         })
 

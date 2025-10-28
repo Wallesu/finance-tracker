@@ -169,6 +169,7 @@ function Dashboard() {
                 <th>Data</th>
                 <th>Descrição</th>
                 <th>Categoria</th>
+                <th>Cartão</th>
                 <th>Tipo</th>
                 <th>Valor</th>
               </tr>
@@ -179,6 +180,7 @@ function Dashboard() {
                   <td>{new Date(transaction.date).toLocaleDateString('pt-BR')}</td>
                   <td>{transaction.description}</td>
                   <td>{transaction.category?.description || 'Sem categoria'}</td>
+                  <td>{transaction.card?.name || '-'}</td>
                   <td>
                     <span className={`type-badge ${transaction.type.toLowerCase()}`}>
                       {transaction.type === 'INCOME' ? 'Receita' : 'Despesa'}
