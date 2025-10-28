@@ -7,6 +7,7 @@ function Dashboard() {
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
+  const [categorizing, setCategorizing] = useState<boolean>(false)
 
   useEffect(() => {
     loadTransactions()
@@ -22,6 +23,22 @@ function Dashboard() {
       console.error(err)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleCategorize = async () => {
+    try {
+      setCategorizing(true)
+      await transactionService.categorizeAll()
+      // Aguarda um pouco para o backend processar
+      setTimeout(() => {
+        loadTransactions()
+        setCategorizing(false)
+      }, 500)
+    } catch (err) {
+      setError('Erro ao categorizar transações')
+      console.error(err)
+      setCategorizing(false)
     }
   }
 
@@ -71,7 +88,16 @@ function Dashboard() {
       </div>
 
       <div className="dashboard-content">
-        <h2>Transações ({transactions.length})</h2>
+        <div className="dashboard-content-header">
+          <h2>Transações ({transactions.length})</h2>
+          <button 
+            onClick={handleCategorize} 
+            disabled={categorizing}
+            className="categorize-button"
+          >
+            {categorizing ? 'Categorizando...' : 'Categorizar Transações'}
+          </button>
+        </div>
         <div className="transactions-table">
           <table>
             <thead>

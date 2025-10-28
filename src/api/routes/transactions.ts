@@ -1,5 +1,6 @@
 import express, { Router } from 'express'
 import { PrismaClient } from '@prisma/client'
+import categoryMapper from '../../services/category/categoryService'
 
 const router = Router()
 const prisma = new PrismaClient()
@@ -43,6 +44,20 @@ router.get('/transactions/:id', async (req: express.Request, res: express.Respon
     } catch (error) {
         console.error('Erro ao buscar transação:', error)
         return res.status(500).json({ error: 'Erro ao buscar transação' })
+    }
+})
+
+// POST /api/transactions/categorize - Categoriza todas as transações sem categoria
+router.post('/transactions/categorize', async (req: express.Request, res: express.Response) => {
+    try {
+        await categoryMapper.categorizeAllUncategorizedTransactions()
+        return res.json({ 
+            success: true, 
+            message: 'Transações categorizadas com sucesso' 
+        })
+    } catch (error) {
+        console.error('Erro ao categorizar transações:', error)
+        return res.status(500).json({ error: 'Erro ao categorizar transações' })
     }
 })
 

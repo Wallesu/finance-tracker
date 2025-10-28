@@ -1,3 +1,7 @@
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
+
 function map(description: string): string {
     const patterns: Record<string, string[]> = {
         bebida: ["bebida", "cervejaria"],
@@ -36,6 +40,49 @@ function map(description: string): string {
     return ""
 }
 
+async function categorizeAllUncategorizedTransactions(): Promise<void> {
+    console.log("Buscando transações sem categoria...")
+    
+    const transactions = await prisma.transaction.findMany({
+        where: {
+            categoryId: null
+        }
+    })
+
+    console.log(`Encontradas ${transactions.length} transações sem categoria`)
+
+    let categorizedCount = 0
+
+    for (const transaction of transactions) {
+        const categoryName = map(transaction.description)
+        
+        if (categoryName && categoryName !== "") {
+            // Busca ou cria a categoria
+            let category = await prisma.category.findUnique({
+                where: { description: categoryName }
+            })
+
+            if (!category) {
+                category = await prisma.category.create({
+                    data: { description: categoryName }
+                })
+                console.log(`Categoria criada: ${categoryName}`)
+            }
+
+            // Atualiza a transação com a categoria
+            await prisma.transaction.update({
+                where: { id: transaction.id },
+                data: { categoryId: category.id }
+            })
+
+            categorizedCount++
+        }
+    }
+
+    console.log(`${categorizedCount} transações foram categorizadas`)
+}
+
 export default {
-    map
+    map,
+    categorizeAllUncategorizedTransactions
 }
