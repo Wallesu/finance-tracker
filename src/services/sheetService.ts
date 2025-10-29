@@ -1,5 +1,6 @@
-import { Transaction, TransactionType } from "src/interfaces/transaction"
+import { Transaction, TransactionType } from "src/entities/transaction"
 import { google, sheets_v4 } from "googleapis"
+import { TransactionSheetDTO } from "src/dtos/SheetTransactionsDTO"
 
 export async function upload(
     sheetsClient: sheets_v4.Sheets,
@@ -39,7 +40,7 @@ export async function read(
     sheetsClient: sheets_v4.Sheets,
     spreadsheetId: string,
     startCell: string
-): Promise<Transaction[]> {
+): Promise<TransactionSheetDTO[]> {
     const response = await sheetsClient.spreadsheets.values.get({
         spreadsheetId,
         range: `${startCell}:E1000`
@@ -48,7 +49,7 @@ export async function read(
     const rows = response.data.values || []
 
     return rows
-        .map((row): Transaction => {
+        .map((row): TransactionSheetDTO => {
             return {
                 date: row[0],
                 description: row[1],
@@ -57,7 +58,7 @@ export async function read(
                 category: row[4] || undefined
             }
         })
-        .filter((row: Transaction) => {
+        .filter((row: TransactionSheetDTO) => {
             if (!row.date || !row.description || !row.value || !row.type)
                 return false
 

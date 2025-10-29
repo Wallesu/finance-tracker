@@ -1,4 +1,5 @@
-import { PrismaClient, Card } from "@prisma/client"
+import { PrismaClient } from "@prisma/client"
+import { Card } from "src/entities/card"
 
 const prisma = new PrismaClient()
 
@@ -6,14 +7,12 @@ async function getOrCreateCard(fileName?: string): Promise<Card> {
     let cardName: string
 
     if (!fileName) {
-        // caso sem filename (ex.: foto -> Caju)
         cardName = "caju"
     } else {
         const lowerName = fileName.toLowerCase()
         if (lowerName.includes("nubank")) {
             cardName = "nubank"
         } else {
-            // default para Banco do Brasil
             cardName = "bb"
         }
     }
@@ -26,7 +25,6 @@ async function getOrCreateCard(fileName?: string): Promise<Card> {
         card = await prisma.card.create({
             data: { name: cardName }
         })
-        console.log(`Card criado: ${cardName}`)
     }
 
     return card as Card

@@ -3,7 +3,7 @@ dotenv.config()
 
 import telegramService from "./services/telegramService"
 import transactionService from "./services/transactionService"
-import { Transaction } from "src/interfaces/transaction"
+import { Transaction } from "src/entities/transaction"
 import { Transaction as TransactionPrisma } from "@prisma/client"
 import categoryMapper from "./services/categoryService"
 import sheetService from "./services/sheetService"
@@ -38,7 +38,7 @@ telegramService.startBot(
         //const transactionsAlreadyInSheet = await sheetReader(sheetClient, SPREADSHEET_ID, startCell)
 
         console.log("buscando transações da base de dados...")
-        const transactionsAlreadyInDb: TransactionPrisma[] =
+        const transactionsAlreadyInDb: Transaction[] =
             await transactionService.getAll()
 
         console.log(
