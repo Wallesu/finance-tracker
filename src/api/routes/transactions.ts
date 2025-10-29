@@ -1,6 +1,6 @@
 import express, { Router } from 'express'
 import { PrismaClient } from '@prisma/client'
-import categoryMapper from '../../services/category/categoryService'
+import categoryMapper from '../../services/categoryService'
 
 const router = Router()
 const prisma = new PrismaClient()

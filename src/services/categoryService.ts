@@ -14,7 +14,8 @@ function map(description: string): string {
             "sorveteria",
             "mercado",
             "ifd*",
-            "condorSuperCenter"
+            "condorSuperCenter",
+            "mc donalds"
         ],
         entretenimento: ["cinema", "ALLES PARK", "Rufino"],
         roupa: ["youcom"],

@@ -1,12 +1,12 @@
 import dotenv from "dotenv"
 dotenv.config()
 
-import telegramService from "./services/telegram/telegramService"
-import transactionService from "./services/transaction/transactionService"
+import telegramService from "./services/telegramService"
+import transactionService from "./services/transactionService"
 import { Transaction } from "src/interfaces/transaction"
 import { Transaction as TransactionPrisma } from "@prisma/client"
-import categoryMapper from "./services/category/categoryService"
-import sheetService from "./services/sheet/sheetService"
+import categoryMapper from "./services/categoryService"
+import sheetService from "./services/sheetService"
 import { startServer } from "./api/server"
 
 function getRequiredEnvVar(name: string): string {

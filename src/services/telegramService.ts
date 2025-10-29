@@ -3,9 +3,9 @@ import axios from "axios"
 import iconv from "iconv-lite"
 import fs from "fs"
 import { Transaction } from "src/interfaces/transaction"
-import { selectCsvParser } from "../../parsers/parserDispatcher"
-import cajuParser from "../../parsers/cajuParser"
-import cardService from "../card/cardService"
+import { selectCsvParser } from "../parsers/parserDispatcher"
+import cajuParser from "../parsers/cajuParser"
+import cardService from "./cardService"
 import { Card } from "@prisma/client" 
 
 function startBot(
