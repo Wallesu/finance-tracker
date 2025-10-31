@@ -20,16 +20,17 @@ model Card {
 }
 
 model Transaction {
-  id          Int       @id @default(autoincrement())
-  date        DateTime
-  type        String
-  description String
-  value       Float
-  hash        String    @unique @db.VarChar(64) // SHA-256 tem 64 caracteres em hex
-  categoryId  Int?
-  category    Category?  @relation(fields: [categoryId], references: [id])
-  cardId      Int?
-  card        Card?      @relation(fields: [cardId], references: [id])
+  id                Int       @id @default(autoincrement())
+  date              DateTime
+  type              String
+  originalDescription String
+  description       String?
+  value             Float
+  hash              String    @unique @db.VarChar(64) // SHA-256 tem 64 caracteres em hex
+  categoryId        Int?
+  category          Category?  @relation(fields: [categoryId], references: [id])
+  cardId            Int?
+  card              Card?      @relation(fields: [cardId], references: [id])
 
   @@index([hash])
 }

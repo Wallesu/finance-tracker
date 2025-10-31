@@ -15,7 +15,7 @@ async function insert(transactions: Transaction[]): Promise<void> {
             create: {
                 date: new Date(tx.date),
                 type: tx.type,
-                description: tx.description,
+                originalDescription: tx.description,
                 value: tx.value,
                 hash,
                 cardId: tx.card?.id
@@ -39,7 +39,7 @@ function getDiff(
     const transactionInComingAsTransaction: Transaction[] = transactionInComing.map(transactionInComing => {
         return {
             date: new Date(transactionInComing.date),
-            description: transactionInComing.description,
+            originalDescription: transactionInComing.description,
             value: transactionInComing.value,
             type: convertToTransactionType(transactionInComing.type)
         }

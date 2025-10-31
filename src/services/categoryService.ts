@@ -55,7 +55,7 @@ async function categorizeAllUncategorizedTransactions(): Promise<void> {
     let categorizedCount = 0
 
     for (const transaction of transactions) {
-        const categoryName = map(transaction.description)
+        const categoryName = map(transaction.originalDescription)
         
         if (categoryName && categoryName !== "") {
             // Busca ou cria a categoria

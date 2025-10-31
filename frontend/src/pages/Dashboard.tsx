@@ -183,7 +183,7 @@ function Dashboard() {
               {transactions.map((transaction) => (
                 <tr key={transaction.id}>
                   <td>{new Date(transaction.date).toLocaleDateString('pt-BR')}</td>
-                  <td>{transaction.description}</td>
+                  <td>{transaction.description ?? transaction.originalDescription}</td>
                   <td>{transaction.category?.description || 'Sem categoria'}</td>
                   <td>{transaction.card?.name || '-'}</td>
                   <td>

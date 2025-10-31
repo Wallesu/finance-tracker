@@ -4,7 +4,8 @@ export interface Transaction {
   id: number
   date: string
   type: TransactionType
-  description: string
+  originalDescription: string
+  description: string | null
   value: number
   hash: string
   categoryId: number | null
