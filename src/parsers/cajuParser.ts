@@ -1,5 +1,5 @@
 import Tesseract from "tesseract.js"
-import { Transaction } from "src/entities/transaction"
+import { SheetTransactionDTO } from "src/dtos/SheetTransactionDTO"
 
 async function imageToText(imagePath: string) {
     const result = await Tesseract.recognize(imagePath, "por") // "por" = português
@@ -7,13 +7,13 @@ async function imageToText(imagePath: string) {
     return teste
 }
 
-function textToTransaction(text: string): Transaction[] {
+function textToTransaction(text: string): SheetTransactionDTO[] {
     const lines = text
         .split("\n")
         .map((l) => l.trim())
         .filter((l) => l.length > 0)
 
-    const transactions: Transaction[] = []
+    const transactions: SheetTransactionDTO[] = []
     let currentDate = ""
     const monthMap: Record<string, string> = {
         JAN: "01",

@@ -4,10 +4,10 @@ dotenv.config()
 import telegramService from "./services/telegramService"
 import transactionService from "./services/transactionService"
 import { Transaction } from "src/entities/transaction"
-import { Transaction as TransactionPrisma } from "@prisma/client"
 import categoryMapper from "./services/categoryService"
 import sheetService from "./services/sheetService"
 import { startServer } from "./api/server"
+import { SheetTransactionDTO } from "./dtos/SheetTransactionDTO"
 
 function getRequiredEnvVar(name: string): string {
     const value = process.env[name]
@@ -28,7 +28,7 @@ startServer()
 // Iniciar bot do Telegram
 telegramService.startBot(
     TELEGRAM_TOKEN,
-    async (transactions: Transaction[]) => {
+    async (transactions: SheetTransactionDTO[]) => {
         const directoryGoogleKeyFile = "src/credentials/"
         const sheetClient = sheetService.buildClient(
             directoryGoogleKeyFile + GOOGLE_KEY_FILE_NAME

@@ -1,10 +1,10 @@
+import { SheetTransactionDTO } from "src/dtos/SheetTransactionDTO"
 import bbCsvParser from "./bbParser"
 import nubankParser from "./nubankParser"
-import { Transaction } from "src/entities/transaction"
 
 export function selectCsvParser(
     fileName: string
-): (csv: string) => Transaction[] {
+): (csv: string) => SheetTransactionDTO[] {
     const lowerName = fileName.toLowerCase()
 
     if (lowerName.includes("nubank")) {

@@ -1,6 +1,8 @@
 import { Transaction } from "src/entities/transaction"
+import { TransactionType, convertToTransactionType } from "../types/transactionType"
 import { PrismaClient } from "@prisma/client"
 import crypto from "crypto"
+import { SheetTransactionDTO } from "src/dtos/SheetTransactionDTO"
 
 const prisma = new PrismaClient()
 
@@ -30,17 +32,26 @@ async function getAll(): Promise<Transaction[]> {
 
 function getDiff(
     transactionAlreadyInDb: Transaction[],
-    transactionInComing: Transaction[]
+    transactionInComing: SheetTransactionDTO[]
 ): Transaction[] {
     const existingHashes = new Set(transactionAlreadyInDb.map((tx) => tx.hash))
 
-    return transactionInComing.filter((tx) => {
+    const transactionInComingAsTransaction: Transaction[] = transactionInComing.map(transactionInComing => {
+        return {
+            date: new Date(transactionInComing.date),
+            description: transactionInComing.description,
+            value: transactionInComing.value,
+            type: convertToTransactionType(transactionInComing.type)
+        }
+    });
+
+    return transactionInComingAsTransaction.filter((tx) => {
         const hash = gerarHash(tx)
         return !existingHashes.has(hash)
     })
 }
 
-function gerarHash({ date, type, description, value }: Transaction): string {
+function gerarHash({ date, type, description, value }: { date: Date, type: TransactionType, description: string, value: number }): string {
     const base = `${date}|${type}|${description}|${value}`
     return crypto.createHash("sha256").update(base).digest("hex")
 }

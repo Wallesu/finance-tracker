@@ -7,10 +7,11 @@ import { selectCsvParser } from "../parsers/parserDispatcher"
 import cajuParser from "../parsers/cajuParser"
 import cardService from "./cardService"
 import { Card } from "@prisma/client" 
+import { SheetTransactionDTO } from "src/dtos/SheetTransactionDTO"
 
 function startBot(
     token: string,
-    callback: (statementContent: Transaction[]) => void
+    callback: (statementContent: SheetTransactionDTO[]) => void
 ) {
     const bot = new TelegramBot(token, { polling: true })
 
@@ -29,8 +30,7 @@ function startBot(
                 return
             }
 
-            let records: Transaction[] = []
-            let cardId: number = 0
+            let records: SheetTransactionDTO[] = []
 
             if (msg.document) {
                 const fileName = msg.document.file_name!
@@ -45,7 +45,7 @@ function startBot(
                 // Buscar ou criar card e obter ID
                 const card: Card = await cardService.getOrCreateCard(fileName)
                 records.forEach(record => {
-                    record.card = card
+                    record.card = card.name
                 })
 
                 await bot.sendMessage(
@@ -84,7 +84,7 @@ function startBot(
                     // Buscar ou criar card Caju e obter ID
                     const card: Card = await cardService.getOrCreateCard()
                     records.forEach(record => {
-                        record.card = card
+                        record.card = card.name
                     })
                 } finally {
                     await fs.promises.unlink(filePath)

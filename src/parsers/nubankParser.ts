@@ -1,7 +1,7 @@
 import { parse } from "csv-parse/sync"
-import { Transaction } from "src/entities/transaction"
+import { SheetTransactionDTO } from "src/dtos/SheetTransactionDTO"
 
-export function csvToTransactions(csv: string): Transaction[] {
+export function csvToTransactions(csv: string): SheetTransactionDTO[] {
     const records = parse(csv, {
         columns: true,
         skip_empty_lines: true,
@@ -23,7 +23,7 @@ export function csvToTransactions(csv: string): Transaction[] {
             description: rawDescription,
             value: Math.abs(valueInCents),
             type
-        } satisfies Transaction
+        } satisfies SheetTransactionDTO
     })
 }
 
