@@ -2,9 +2,9 @@ import Tesseract from "tesseract.js"
 import { SheetTransactionDTO } from "src/dtos/SheetTransactionDTO"
 
 async function imageToText(imagePath: string) {
-    const result = await Tesseract.recognize(imagePath, "por") // "por" = português
-    const teste: string = result.data.text
-    return teste
+    const result = await Tesseract.recognize(imagePath, "por")
+    const text: string = result.data.text
+    return text
 }
 
 function textToTransaction(text: string): SheetTransactionDTO[] {
@@ -15,6 +15,8 @@ function textToTransaction(text: string): SheetTransactionDTO[] {
 
     const transactions: SheetTransactionDTO[] = []
     let currentDate = ""
+    const now = new Date()
+
     const monthMap: Record<string, string> = {
         JAN: "01",
         FEV: "02",
@@ -33,26 +35,37 @@ function textToTransaction(text: string): SheetTransactionDTO[] {
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i]
 
-        // Detecta data (ex: "20 OUT")
+        // Data "HOJE"
+        if (/^HOJE$/i.test(line)) {
+            currentDate = now.toISOString().split("T")[0]
+            continue
+        }
+
+        // Data "20 OUT"
         const dateMatch = line.match(/^(\d{1,2})\s*([A-ZÇ]{3})$/i)
         if (dateMatch) {
             const day = dateMatch[1].padStart(2, "0")
             const month = monthMap[dateMatch[2].toUpperCase()]
-            const year = new Date().getFullYear()
+            const year = now.getFullYear()
             currentDate = `${year}-${month}-${day}`
             continue
         }
 
-        // Detecta linha com valor (ex: "- R$2,50" ou "-R$ 20,00")
-        const valueMatch = line.match(/-?\s*R\$\s*([\d.,]+)/)
+        // Transações com valor
+        const valueMatch = line.match(/([+-]?)\s*R\$\s*([\d.,]+)/)
         if (valueMatch && currentDate) {
-            const description = line.replace(/-?\s*R\$\s*[\d.,]+/, "").trim()
+            let description = line.replace(/([+-]?)\s*R\$\s*[\d.,]+/, "").trim()
 
+            if (/caiu\s*caju!?/i.test(description)) {
+                description = "Vale Caju"
+            }
+
+            const signal = valueMatch[1] === "+" ? 1 : -1
             const value = Math.abs(
-                Number(valueMatch[1].replace(".", "").replace(",", "."))
+                Number(valueMatch[2].replace(".", "").replace(",", "."))
             )
+            const type = signal > 0 ? "INCOME" : "EXPENSE"
 
-            const type = "EXPENSE" // Caju só mostra gastos
             const nextLine = lines[i + 1]
             const timeMatch = nextLine?.match(/^(\d{2}:\d{2})$/)
             const hour = timeMatch ? nextLine : "00:00"
@@ -66,7 +79,7 @@ function textToTransaction(text: string): SheetTransactionDTO[] {
                 type
             })
 
-            if (timeMatch) i++ // pular a linha da hora
+            if (timeMatch) i++
         }
     }
 
